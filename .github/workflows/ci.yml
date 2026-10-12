@@ -12,6 +12,8 @@ defaults:
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      SANITIZERS: address,undefined
     strategy:
       matrix:
         compiler: [gcc, clang]

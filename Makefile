@@ -7,6 +7,8 @@ BUILD_BASE_DIR ?= build
 CC ?= cc
 PYTHON ?= python3
 GCOVR ?= gcovr
+# Onyx needs only ASan by default; opt into UBSan where its runtime is installed.
+SANITIZERS ?= address
 CPPFLAGS += -D_POSIX_C_SOURCE=200809L -Isrc
 CFLAGS ?= -std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow
 LDFLAGS ?=
@@ -24,8 +26,8 @@ ifeq ($(BUILD),release)
   SRCS := $(APP_SRCS)
 else ifeq ($(BUILD),debug)
   BUILD_DIR := $(BUILD_BASE_DIR)/debug
-  MODE_FLAGS := -g3 -O0 -fno-omit-frame-pointer -fsanitize=address,undefined -fno-pie
-  MODE_LDFLAGS := -fsanitize=address,undefined -no-pie
+  MODE_FLAGS := -g3 -O0 -fno-omit-frame-pointer -fsanitize=$(SANITIZERS) -fno-pie
+  MODE_LDFLAGS := -fsanitize=$(SANITIZERS) -no-pie
   TARGET := $(BUILD_DIR)/$(APP_NAME)_d
   SRCS := $(APP_SRCS)
 else ifeq ($(BUILD),test)
@@ -48,14 +50,14 @@ else ifeq ($(BUILD),adapter-test)
   SRCS := $(ADAPTER_TEST_SRCS)
 else ifeq ($(BUILD),debug-adapter-test)
   BUILD_DIR := $(BUILD_BASE_DIR)/debug-adapter-tests
-  MODE_FLAGS := -g3 -O0 -fno-omit-frame-pointer -fsanitize=address,undefined -fno-pie
-  MODE_LDFLAGS := -fsanitize=address,undefined -no-pie
+  MODE_FLAGS := -g3 -O0 -fno-omit-frame-pointer -fsanitize=$(SANITIZERS) -fno-pie
+  MODE_LDFLAGS := -fsanitize=$(SANITIZERS) -no-pie
   TARGET := $(BUILD_DIR)/$(APP_NAME)_adapter_td
   SRCS := $(ADAPTER_TEST_SRCS)
 else ifeq ($(BUILD),debug-test)
   BUILD_DIR := $(BUILD_BASE_DIR)/debug-test
-  MODE_FLAGS := -g3 -O0 -fno-omit-frame-pointer -fsanitize=address,undefined -fno-pie
-  MODE_LDFLAGS := -fsanitize=address,undefined -no-pie
+  MODE_FLAGS := -g3 -O0 -fno-omit-frame-pointer -fsanitize=$(SANITIZERS) -fno-pie
+  MODE_LDFLAGS := -fsanitize=$(SANITIZERS) -no-pie
   TARGET := $(BUILD_DIR)/$(APP_NAME)_td
   SRCS := $(CORE_SRCS) $(TEST_SRCS)
 else
@@ -69,7 +71,7 @@ $(TARGET): $(OBJS)
 	@mkdir -p $(dir $@)
 	$(CC) $(OBJS) $(LDFLAGS) $(MODE_LDFLAGS) $(LDLIBS) -o $@
 
-$(BUILD_DIR)/%.o: %.c
+$(BUILD_DIR)/%.o: %.c Makefile
 	@mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(MODE_FLAGS) -MMD -MP -c $< -o $@
 
@@ -128,6 +130,8 @@ help:
 	@echo 'Default: release. Release executable: build/release/myapp'
 	@echo 'report requires gcovr and enforces 100% line and branch coverage for every src/*.c file.'
 	@echo 'benchmark runs the required 1 MiB file experiment (12 transfers).'
+	@echo 'Default sanitizer: address. Optional: SANITIZERS=address,undefined BUILD_BASE_DIR=build/ubsan'
+	@echo 'Use a fresh build directory or make clean when changing SANITIZERS or CC.'
 print:
 	@echo 'BUILD=$(BUILD) CC=$(CC) TARGET=$(TARGET)'
 	@echo 'CPPFLAGS=$(CPPFLAGS) CFLAGS=$(CFLAGS) MODE_FLAGS=$(MODE_FLAGS)'
