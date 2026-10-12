@@ -1,0 +1,35 @@
+{
+  "recorded_at_utc": "2026-10-12T04:53:56.284006+00:00",
+  "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "gcovr": "gcovr 7.0",
+  "scope": "all src/*.c; no source, line, or branch exclusions",
+  "coverage": {
+    "src/lab.c": {
+      "lines": 178,
+      "branches": 152
+    },
+    "src/main.c": {
+      "lines": 250,
+      "branches": 272
+    }
+  },
+  "sha256": {
+    "src/lab.c": "275951489257d1bc6de2cdd678b8232baf0b17c11f4d48a2e1640fb9a64a953a",
+    "src/lab.h": "46eb41e763126855c1cc6d8eebbccc6e0395c6c39a68444293830ba5e7ce6d7f",
+    "src/main.c": "20ca5c9ce00de8d2f5a8e37a410559ed3b27aaf3480477f2be2a6c397ee412d3",
+    "tests/lab-test.c": "f8732fefa660c773551d06f357e0b8a0427167d56a910345d5c4084769f1e57a",
+    "tests/adapter-test.c": "6592d711f017abd35e009fdbd482c2dec52ca55c58c41ace13ef7515937dd1ad",
+    "Makefile": "44c7b250414f6c25157f066f605f26a7bb8256533f0daa809fe6e0bb1b0c9826",
+    "scripts/integration-test.py": "c5e2895e9e165ef23e0a373f34809e0be36ede46fff3aa40d63536dd4d55c50a",
+    "scripts/io-edge-tests.py": "cb70e5905120de63a7f13fdadcef9bac726b333721a7f518058bf16f5676c7ab",
+    "cs425_relay.py": "56e23d217e5518db47ad56e26f1284c6f2ff549bef3320e930d436b9fbc8c353"
+  },
+  "commands": [
+    "make report",
+    "make all check leak leak-test",
+    "make all check report leak leak-test BUILD_BASE_DIR=build/coverage-clean",
+    "make check leak-test"
+  ],
+  "remote_ci_verified": false
+}

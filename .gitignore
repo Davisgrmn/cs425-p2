@@ -53,4 +53,12 @@ dkms.conf
 /test-lab
 /myprogram
 /build
+/.local-tools/
+/.venv/
+/build-clang/
+__pycache__/
+*.pyc
 /.vscode/c_cpp_properties.json
+/in.bin
+/out.bin
+/1mib.bin

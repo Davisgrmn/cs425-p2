@@ -1,0 +1,150 @@
+make BUILD=release _build
+make[1]: Entering directory '/home/davis/cs425/cs425-p2'
+make[1]: Nothing to be done for '_build'.
+make[1]: Leaving directory '/home/davis/cs425/cs425-p2'
+make BUILD=debug _build
+make[1]: Entering directory '/home/davis/cs425/cs425-p2'
+make[1]: Nothing to be done for '_build'.
+make[1]: Leaving directory '/home/davis/cs425/cs425-p2'
+make BUILD=test _build
+make[1]: Entering directory '/home/davis/cs425/cs425-p2'
+make[1]: Nothing to be done for '_build'.
+make[1]: Leaving directory '/home/davis/cs425/cs425-p2'
+make BUILD=debug-test _build
+make[1]: Entering directory '/home/davis/cs425/cs425-p2'
+make[1]: Nothing to be done for '_build'.
+make[1]: Leaving directory '/home/davis/cs425/cs425-p2'
+./build/tests/myapp_t
+tests/lab-test.c:768:test_checksum_rfc1071_and_odd_lengths:PASS
+tests/lab-test.c:769:test_exact_wire_fixtures_and_network_order:PASS
+tests/lab-test.c:770:test_packet_roundtrips_boundary_payloads:PASS
+tests/lab-test.c:771:test_packet_encoder_rejects_invalid_arguments:PASS
+tests/lab-test.c:772:test_packet_decoder_rejects_each_malformed_wire_condition:PASS
+tests/lab-test.c:773:test_sender_initialization_limits:PASS
+tests/lab-test.c:774:test_sender_window_slides_with_cumulative_ack:PASS
+tests/lab-test.c:775:test_sender_empty_file_and_exact_payload_multiple:PASS
+tests/lab-test.c:776:test_sender_ignores_duplicate_future_and_non_ack_packets:PASS
+tests/lab-test.c:777:test_sender_timer_retransmits_entire_unacknowledged_window:PASS
+tests/lab-test.c:778:test_sender_fails_after_ten_consecutive_timeouts_and_resets_on_progress:PASS
+tests/lab-test.c:779:test_sender_fin_retransmission_and_ring_buffer_reuse:PASS
+tests/lab-test.c:780:test_receiver_delivers_in_order_and_repeats_cumulative_ack:PASS
+tests/lab-test.c:781:test_receiver_fin_must_be_in_order_and_linger_is_fixed:PASS
+tests/lab-test.c:782:test_receiver_empty_file_and_inactivity_boundary:PASS
+tests/lab-test.c:783:test_receiver_valid_activity_resets_idle_timer:PASS
+tests/lab-test.c:784:test_receiver_rejects_invalid_semantic_packets:PASS
+tests/lab-test.c:785:test_receiver_refuses_file_above_limit:PASS
+tests/lab-test.c:786:test_public_state_machine_null_arguments_are_safe:PASS
+tests/lab-test.c:787:test_virtual_clock_boundaries_do_not_wrap:PASS
+tests/lab-test.c:788:test_in_memory_channel_clean_empty_and_exact_multiple_files:PASS
+tests/lab-test.c:789:test_in_memory_channel_fixed_seed_bidirectional_damage:PASS
+
+-----------------------
+22 Tests 0 Failures 0 Ignored 
+OK
+find build/tests -name '*.gcda' -delete
+./build/tests/myapp_t
+tests/lab-test.c:768:test_checksum_rfc1071_and_odd_lengths:PASS
+tests/lab-test.c:769:test_exact_wire_fixtures_and_network_order:PASS
+tests/lab-test.c:770:test_packet_roundtrips_boundary_payloads:PASS
+tests/lab-test.c:771:test_packet_encoder_rejects_invalid_arguments:PASS
+tests/lab-test.c:772:test_packet_decoder_rejects_each_malformed_wire_condition:PASS
+tests/lab-test.c:773:test_sender_initialization_limits:PASS
+tests/lab-test.c:774:test_sender_window_slides_with_cumulative_ack:PASS
+tests/lab-test.c:775:test_sender_empty_file_and_exact_payload_multiple:PASS
+tests/lab-test.c:776:test_sender_ignores_duplicate_future_and_non_ack_packets:PASS
+tests/lab-test.c:777:test_sender_timer_retransmits_entire_unacknowledged_window:PASS
+tests/lab-test.c:778:test_sender_fails_after_ten_consecutive_timeouts_and_resets_on_progress:PASS
+tests/lab-test.c:779:test_sender_fin_retransmission_and_ring_buffer_reuse:PASS
+tests/lab-test.c:780:test_receiver_delivers_in_order_and_repeats_cumulative_ack:PASS
+tests/lab-test.c:781:test_receiver_fin_must_be_in_order_and_linger_is_fixed:PASS
+tests/lab-test.c:782:test_receiver_empty_file_and_inactivity_boundary:PASS
+tests/lab-test.c:783:test_receiver_valid_activity_resets_idle_timer:PASS
+tests/lab-test.c:784:test_receiver_rejects_invalid_semantic_packets:PASS
+tests/lab-test.c:785:test_receiver_refuses_file_above_limit:PASS
+tests/lab-test.c:786:test_public_state_machine_null_arguments_are_safe:PASS
+tests/lab-test.c:787:test_virtual_clock_boundaries_do_not_wrap:PASS
+tests/lab-test.c:788:test_in_memory_channel_clean_empty_and_exact_multiple_files:PASS
+tests/lab-test.c:789:test_in_memory_channel_fixed_seed_bidirectional_damage:PASS
+
+-----------------------
+22 Tests 0 Failures 0 Ignored 
+OK
+gcovr --root . --filter 'src/lab\.c$' --object-directory build/tests --fail-under-line 100 --fail-under-branch 100 --print-summary --txt build/report/txt/coverage_report.txt --html-details build/report/html/coverage_report.html build/tests
+(INFO) Reading coverage data...
+(INFO) Writing coverage report...
+lines: 100.0% (178 out of 178)
+functions: 100.0% (13 out of 13)
+branches: 100.0% (152 out of 152)
+------------------------------------------------------------------------------
+                           GCC Code Coverage Report
+Directory: .
+------------------------------------------------------------------------------
+File                                       Lines    Exec  Cover   Missing
+------------------------------------------------------------------------------
+src/lab.c                                    178     178   100%
+------------------------------------------------------------------------------
+TOTAL                                        178     178   100%
+------------------------------------------------------------------------------
+ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 ./build/debug/myapp_d
+Usage: myapp send -s <session> [-w window] [-T timeout-ms] [-l loss]
+                  [-c corrupt] [-d dup] [-p port] <relay> <file>
+       myapp recv -s <session> [-p port] <relay> <file>
+Defaults: window=8, timeout-ms=250, loss=corrupt=dup=0, port=4250
+Session: 1-32 lowercase letters, digits, or hyphens. Window: 1-64.
+Probabilities: decimal 0 through 0.5 (no exponents). File size: at most 16 MiB.
+ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 ./build/debug-test/myapp_td
+tests/lab-test.c:768:test_checksum_rfc1071_and_odd_lengths:PASS
+tests/lab-test.c:769:test_exact_wire_fixtures_and_network_order:PASS
+tests/lab-test.c:770:test_packet_roundtrips_boundary_payloads:PASS
+tests/lab-test.c:771:test_packet_encoder_rejects_invalid_arguments:PASS
+tests/lab-test.c:772:test_packet_decoder_rejects_each_malformed_wire_condition:PASS
+tests/lab-test.c:773:test_sender_initialization_limits:PASS
+tests/lab-test.c:774:test_sender_window_slides_with_cumulative_ack:PASS
+tests/lab-test.c:775:test_sender_empty_file_and_exact_payload_multiple:PASS
+tests/lab-test.c:776:test_sender_ignores_duplicate_future_and_non_ack_packets:PASS
+tests/lab-test.c:777:test_sender_timer_retransmits_entire_unacknowledged_window:PASS
+tests/lab-test.c:778:test_sender_fails_after_ten_consecutive_timeouts_and_resets_on_progress:PASS
+tests/lab-test.c:779:test_sender_fin_retransmission_and_ring_buffer_reuse:PASS
+tests/lab-test.c:780:test_receiver_delivers_in_order_and_repeats_cumulative_ack:PASS
+tests/lab-test.c:781:test_receiver_fin_must_be_in_order_and_linger_is_fixed:PASS
+tests/lab-test.c:782:test_receiver_empty_file_and_inactivity_boundary:PASS
+tests/lab-test.c:783:test_receiver_valid_activity_resets_idle_timer:PASS
+tests/lab-test.c:784:test_receiver_rejects_invalid_semantic_packets:PASS
+tests/lab-test.c:785:test_receiver_refuses_file_above_limit:PASS
+tests/lab-test.c:786:test_public_state_machine_null_arguments_are_safe:PASS
+tests/lab-test.c:787:test_virtual_clock_boundaries_do_not_wrap:PASS
+tests/lab-test.c:788:test_in_memory_channel_clean_empty_and_exact_multiple_files:PASS
+tests/lab-test.c:789:test_in_memory_channel_fixed_seed_bidirectional_damage:PASS
+
+-----------------------
+22 Tests 0 Failures 0 Ignored 
+OK
+python3 scripts/integration-test.py --app ./build/release/myapp
+PASS clean: 5120 bytes, sender 0.020s
+PASS empty: 0 bytes, sender 0.010s
+PASS one-byte: 1 bytes, sender 0.020s
+PASS 1023-bytes: 1023 bytes, sender 0.020s
+PASS 1024-bytes: 1024 bytes, sender 0.030s
+PASS 1025-bytes: 1025 bytes, sender 0.020s
+PASS loss: 10240 bytes, sender 0.820s
+PASS corrupt: 10240 bytes, sender 1.310s
+PASS duplicate: 10240 bytes, sender 0.040s
+PASS mixed: 10240 bytes, sender 0.550s
+PASS small-decimals: 22 bytes, sender 0.020s
+PASS decimal-spelling: 17 bytes, sender 0.020s
+PASS window-one: 3072 bytes, sender 1.050s
+PASS window-max: 25600 bytes, sender 1.070s
+PASS CLI: 11 usage/validation cases
+All 14 transfers matched byte for byte. Logs: build/integration
+python3 scripts/io-edge-tests.py --app ./build/release/myapp
+PASS lost_registration_reply
+PASS registration_attempt_limit
+PASS registration_error
+PASS registration_size_limit
+PASS lost_ack_retransmits_window
+PASS ten_sender_timeouts
+PASS malformed_receiver_datagrams
+PASS lost_final_ack_fixed_linger
+PASS file_and_hostname_errors
+PASS invalid_cli
+All 10 I/O edge tests passed.

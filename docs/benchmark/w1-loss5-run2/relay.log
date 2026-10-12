@@ -1,0 +1,3 @@
+2026-10-11 22:18:18,144 listening on udp 127.0.0.1:39961, delay 50 ms
+2026-10-11 22:18:18,190 session bench-w1-loss5-2: receiver 127.0.0.1:47302
+2026-10-11 22:18:18,204 session bench-w1-loss5-2: sender 127.0.0.1:47177, loss 0.05 corrupt 0 dup 0

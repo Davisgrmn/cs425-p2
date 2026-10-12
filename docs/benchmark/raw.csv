@@ -1,0 +1,13 @@
+configuration,trial,window,loss,corrupt,duplicate,seed,bytes,elapsed_seconds,wall_seconds,user_seconds,system_seconds,max_rss_kib,timer,verified,logs
+w1-clean,1,1,0.0,0.0,0.0,7,1048576,104.55,104.562531219,0.01,0.18,2816,GNU time,True,/home/davis/cs425/cs425-p2/build/benchmark-instructor/w1-clean-run1
+w1-clean,2,1,0.0,0.0,0.0,8,1048576,104.55,104.56686491800019,0.03,0.17,2816,GNU time,True,/home/davis/cs425/cs425-p2/build/benchmark-instructor/w1-clean-run2
+w1-clean,3,1,0.0,0.0,0.0,9,1048576,104.56,104.57746998799985,0.02,0.17,2816,GNU time,True,/home/davis/cs425/cs425-p2/build/benchmark-instructor/w1-clean-run3
+w1-loss5,1,1,0.05,0.0,0.0,7,1048576,133.92,133.96795781799983,0.02,0.2,2816,GNU time,True,/home/davis/cs425/cs425-p2/build/benchmark-instructor/w1-loss5-run1
+w1-loss5,2,1,0.05,0.0,0.0,8,1048576,131.69,131.73313423299987,0.02,0.2,2816,GNU time,True,/home/davis/cs425/cs425-p2/build/benchmark-instructor/w1-loss5-run2
+w1-loss5,3,1,0.05,0.0,0.0,9,1048576,133.41,133.46661752799992,0.01,0.21,2816,GNU time,True,/home/davis/cs425/cs425-p2/build/benchmark-instructor/w1-loss5-run3
+w16-clean,1,16,0.0,0.0,0.0,7,1048576,6.66,6.700001730000167,0.0,0.03,2816,GNU time,True,/home/davis/cs425/cs425-p2/build/benchmark-instructor/w16-clean-run1
+w16-clean,2,16,0.0,0.0,0.0,8,1048576,6.66,6.701207194999824,0.0,0.04,2816,GNU time,True,/home/davis/cs425/cs425-p2/build/benchmark-instructor/w16-clean-run2
+w16-clean,3,16,0.0,0.0,0.0,9,1048576,6.66,6.701581079999869,0.0,0.03,2816,GNU time,True,/home/davis/cs425/cs425-p2/build/benchmark-instructor/w16-clean-run3
+w16-loss5,1,16,0.05,0.0,0.0,7,1048576,26.9,26.933562408999933,0.01,0.07,2816,GNU time,True,/home/davis/cs425/cs425-p2/build/benchmark-instructor/w16-loss5-run1
+w16-loss5,2,16,0.05,0.0,0.0,8,1048576,25.5,25.542853766999997,0.01,0.07,2816,GNU time,True,/home/davis/cs425/cs425-p2/build/benchmark-instructor/w16-loss5-run2
+w16-loss5,3,16,0.05,0.0,0.0,9,1048576,26.18,26.231917866000003,0.02,0.06,2816,GNU time,True,/home/davis/cs425/cs425-p2/build/benchmark-instructor/w16-loss5-run3

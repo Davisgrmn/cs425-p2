@@ -1,0 +1,19 @@
+{
+  "measured_at_utc": "2026-10-12T04:18:17Z",
+  "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "python": "3.12.11",
+  "jobs": 12,
+  "trials": 3,
+  "bytes": 1048576,
+  "input_source": "os.urandom (operating-system random bytes)",
+  "input_sha256": "5c2ea501f3665657bbd75d6c184119209bbd270ae143beebc2baf0f2ad8b007b",
+  "app": "/home/davis/cs425/cs425-p2/build/release/myapp",
+  "app_sha256": "73cb4f896c5ec2b802e8dea242c57d919e33532235697e6298fa70b14ef8c005",
+  "relay": "/home/davis/cs425/cs425-p2/cs425_relay.py",
+  "relay_sha256": "56e23d217e5518db47ad56e26f1284c6f2ff549bef3320e930d436b9fbc8c353",
+  "relay_kind": "instructor",
+  "bundled_compatibility_relay": false,
+  "one_way_delay_ms": 50,
+  "timeout_ms": 250
+}

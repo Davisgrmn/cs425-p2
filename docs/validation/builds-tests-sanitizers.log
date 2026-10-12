@@ -1,0 +1,310 @@
+make BUILD=release _build
+make[1]: Entering directory '/home/davis/cs425/cs425-p2'
+cc -D_POSIX_C_SOURCE=200809L -Isrc -std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -O2 -DNDEBUG -fstack-protector-strong -MMD -MP -c src/main.c -o build/release/src/main.o
+cc build/release/src/lab.o build/release/src/main.o    -o build/release/myapp
+make[1]: Leaving directory '/home/davis/cs425/cs425-p2'
+make BUILD=debug _build
+make[1]: Entering directory '/home/davis/cs425/cs425-p2'
+cc -D_POSIX_C_SOURCE=200809L -Isrc -std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -g3 -O0 -fno-omit-frame-pointer -fsanitize=address,undefined -fno-pie -MMD -MP -c src/main.c -o build/debug/src/main.o
+cc build/debug/src/lab.o build/debug/src/main.o  -fsanitize=address,undefined -no-pie  -o build/debug/myapp_d
+make[1]: Leaving directory '/home/davis/cs425/cs425-p2'
+make BUILD=test _build
+make[1]: Entering directory '/home/davis/cs425/cs425-p2'
+make[1]: Nothing to be done for '_build'.
+make[1]: Leaving directory '/home/davis/cs425/cs425-p2'
+make BUILD=debug-test _build
+make[1]: Entering directory '/home/davis/cs425/cs425-p2'
+make[1]: Nothing to be done for '_build'.
+make[1]: Leaving directory '/home/davis/cs425/cs425-p2'
+make BUILD=coverage _build
+make[1]: Entering directory '/home/davis/cs425/cs425-p2'
+make[1]: Nothing to be done for '_build'.
+make[1]: Leaving directory '/home/davis/cs425/cs425-p2'
+make BUILD=adapter-test _build
+make[1]: Entering directory '/home/davis/cs425/cs425-p2'
+make[1]: Nothing to be done for '_build'.
+make[1]: Leaving directory '/home/davis/cs425/cs425-p2'
+make BUILD=debug-adapter-test _build
+make[1]: Entering directory '/home/davis/cs425/cs425-p2'
+cc -D_POSIX_C_SOURCE=200809L -Isrc -std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -g3 -O0 -fno-omit-frame-pointer -fsanitize=address,undefined -fno-pie -MMD -MP -c src/lab.c -o build/debug-adapter-tests/src/lab.o
+cc -D_POSIX_C_SOURCE=200809L -Isrc -std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -g3 -O0 -fno-omit-frame-pointer -fsanitize=address,undefined -fno-pie -MMD -MP -c tests/adapter-test.c -o build/debug-adapter-tests/tests/adapter-test.o
+cc -D_POSIX_C_SOURCE=200809L -Isrc -std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow -g3 -O0 -fno-omit-frame-pointer -fsanitize=address,undefined -fno-pie -MMD -MP -c tests/harness/unity.c -o build/debug-adapter-tests/tests/harness/unity.o
+cc build/debug-adapter-tests/src/lab.o build/debug-adapter-tests/tests/adapter-test.o build/debug-adapter-tests/tests/harness/unity.o  -fsanitize=address,undefined -no-pie  -o build/debug-adapter-tests/myapp_adapter_td
+make[1]: Leaving directory '/home/davis/cs425/cs425-p2'
+./build/tests/myapp_t
+tests/lab-test.c:768:test_checksum_rfc1071_and_odd_lengths:PASS
+tests/lab-test.c:769:test_exact_wire_fixtures_and_network_order:PASS
+tests/lab-test.c:770:test_packet_roundtrips_boundary_payloads:PASS
+tests/lab-test.c:771:test_packet_encoder_rejects_invalid_arguments:PASS
+tests/lab-test.c:772:test_packet_decoder_rejects_each_malformed_wire_condition:PASS
+tests/lab-test.c:773:test_sender_initialization_limits:PASS
+tests/lab-test.c:774:test_sender_window_slides_with_cumulative_ack:PASS
+tests/lab-test.c:775:test_sender_empty_file_and_exact_payload_multiple:PASS
+tests/lab-test.c:776:test_sender_ignores_duplicate_future_and_non_ack_packets:PASS
+tests/lab-test.c:777:test_sender_timer_retransmits_entire_unacknowledged_window:PASS
+tests/lab-test.c:778:test_sender_fails_after_ten_consecutive_timeouts_and_resets_on_progress:PASS
+tests/lab-test.c:779:test_sender_fin_retransmission_and_ring_buffer_reuse:PASS
+tests/lab-test.c:780:test_receiver_delivers_in_order_and_repeats_cumulative_ack:PASS
+tests/lab-test.c:781:test_receiver_fin_must_be_in_order_and_linger_is_fixed:PASS
+tests/lab-test.c:782:test_receiver_empty_file_and_inactivity_boundary:PASS
+tests/lab-test.c:783:test_receiver_valid_activity_resets_idle_timer:PASS
+tests/lab-test.c:784:test_receiver_rejects_invalid_semantic_packets:PASS
+tests/lab-test.c:785:test_receiver_refuses_file_above_limit:PASS
+tests/lab-test.c:786:test_public_state_machine_null_arguments_are_safe:PASS
+tests/lab-test.c:787:test_virtual_clock_boundaries_do_not_wrap:PASS
+tests/lab-test.c:788:test_in_memory_channel_clean_empty_and_exact_multiple_files:PASS
+tests/lab-test.c:789:test_in_memory_channel_fixed_seed_bidirectional_damage:PASS
+
+-----------------------
+22 Tests 0 Failures 0 Ignored 
+OK
+./build/adapter-tests/myapp_adapter_t
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+poll: Input/output error
+UDP socket failed (poll events 8).
+Cannot resolve relay 'localhost': Name or service not known
+connect relay: Too many open files
+connect relay: No route to host
+send: Input/output error
+UDP send returned a partial datagram.
+Internal packet encoding error.
+recv: Input/output error
+Relay refused registration: no receiver
+No relay reply (attempt 1/5).
+No relay reply (attempt 2/5).
+No relay reply (attempt 3/5).
+No relay reply (attempt 4/5).
+No relay reply (attempt 5/5).
+Relay registration timed out after five attempts.
+relay reply: Input/output error
+send: Input/output error
+clock_gettime: Input/output error
+poll: Input/output error
+Relay registration exceeds the 2048-byte limit.
+Relay registration exceeds the 2048-byte limit.
+input: Input/output error
+seek input: Input/output error
+input size: Input/output error
+rewind input: Input/output error
+allocate input: Input/output error
+Could not read the complete input file.
+Could not read the complete input file.
+Input file changed while being read.
+Input file changed while being read.
+close input: Input/output error
+Input file exceeds the 16 MiB limit.
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+send: Input/output error
+send: Input/output error
+poll: Input/output error
+recv: Input/output error
+Transfer gave up after 10 consecutive timeouts without progress.
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+poll: Input/output error
+recv: Input/output error
+write output: Input/output error
+close output: Input/output error
+send: Input/output error
+Receiver timed out or exceeded the 16 MiB file limit.
+Receiver timed out or exceeded the 16 MiB file limit.
+Usage: myapp send -s <session> [-w window] [-T timeout-ms] [-l loss]
+                  [-c corrupt] [-d dup] [-p port] <relay> <file>
+       myapp recv -s <session> [-p port] <relay> <file>
+Defaults: window=8, timeout-ms=250, loss=corrupt=dup=0, port=4250
+Session: 1-32 lowercase letters, digits, or hyphens. Window: 1-64.
+Probabilities: decimal 0 through 0.5 (no exponents). File size: at most 16 MiB.
+file: No such file or directory
+Cannot resolve relay 'localhost': Name or service not known
+Relay refused registration: refused
+file: Permission denied
+poll: Input/output error
+poll: Input/output error
+close output: Input/output error
+tests/adapter-test.c:578:test_decimal_and_integer_validation:PASS
+tests/adapter-test.c:579:test_cli_modes_and_options:PASS
+tests/adapter-test.c:580:test_clock_and_poll_outcomes:PASS
+tests/adapter-test.c:581:test_resolution_and_socket_fallback:PASS
+tests/adapter-test.c:582:test_datagram_send_and_receive_failures:PASS
+tests/adapter-test.c:583:test_registration_replies_and_retries:PASS
+tests/adapter-test.c:584:test_input_success_and_file_failures:PASS
+Sent 3 bytes successfully.
+tests/adapter-test.c:585:test_sender_loop_success_and_bad_acks:PASS
+Sent 3 bytes successfully.
+tests/adapter-test.c:586:test_sender_loop_errors_and_timeout_cleanup:PASS
+Received 3 bytes successfully.
+tests/adapter-test.c:587:test_receiver_loop_delivery_and_errors:PASS
+tests/adapter-test.c:588:test_receiver_rejects_data_above_file_limit:PASS
+Usage: myapp send -s <session> [-w window] [-T timeout-ms] [-l loss]
+                  [-c corrupt] [-d dup] [-p port] <relay> <file>
+       myapp recv -s <session> [-p port] <relay> <file>
+Defaults: window=8, timeout-ms=250, loss=corrupt=dup=0, port=4250
+Session: 1-32 lowercase letters, digits, or hyphens. Window: 1-64.
+Probabilities: decimal 0 through 0.5 (no exponents). File size: at most 16 MiB.
+Sent 3 bytes successfully.
+Received 3 bytes successfully.
+tests/adapter-test.c:589:test_application_exit_codes_and_resource_cleanup:PASS
+
+-----------------------
+12 Tests 0 Failures 0 Ignored 
+OK
+ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 ./build/debug/myapp_d
+Usage: myapp send -s <session> [-w window] [-T timeout-ms] [-l loss]
+                  [-c corrupt] [-d dup] [-p port] <relay> <file>
+       myapp recv -s <session> [-p port] <relay> <file>
+Defaults: window=8, timeout-ms=250, loss=corrupt=dup=0, port=4250
+Session: 1-32 lowercase letters, digits, or hyphens. Window: 1-64.
+Probabilities: decimal 0 through 0.5 (no exponents). File size: at most 16 MiB.
+ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 ./build/debug-test/myapp_td
+tests/lab-test.c:768:test_checksum_rfc1071_and_odd_lengths:PASS
+tests/lab-test.c:769:test_exact_wire_fixtures_and_network_order:PASS
+tests/lab-test.c:770:test_packet_roundtrips_boundary_payloads:PASS
+tests/lab-test.c:771:test_packet_encoder_rejects_invalid_arguments:PASS
+tests/lab-test.c:772:test_packet_decoder_rejects_each_malformed_wire_condition:PASS
+tests/lab-test.c:773:test_sender_initialization_limits:PASS
+tests/lab-test.c:774:test_sender_window_slides_with_cumulative_ack:PASS
+tests/lab-test.c:775:test_sender_empty_file_and_exact_payload_multiple:PASS
+tests/lab-test.c:776:test_sender_ignores_duplicate_future_and_non_ack_packets:PASS
+tests/lab-test.c:777:test_sender_timer_retransmits_entire_unacknowledged_window:PASS
+tests/lab-test.c:778:test_sender_fails_after_ten_consecutive_timeouts_and_resets_on_progress:PASS
+tests/lab-test.c:779:test_sender_fin_retransmission_and_ring_buffer_reuse:PASS
+tests/lab-test.c:780:test_receiver_delivers_in_order_and_repeats_cumulative_ack:PASS
+tests/lab-test.c:781:test_receiver_fin_must_be_in_order_and_linger_is_fixed:PASS
+tests/lab-test.c:782:test_receiver_empty_file_and_inactivity_boundary:PASS
+tests/lab-test.c:783:test_receiver_valid_activity_resets_idle_timer:PASS
+tests/lab-test.c:784:test_receiver_rejects_invalid_semantic_packets:PASS
+tests/lab-test.c:785:test_receiver_refuses_file_above_limit:PASS
+tests/lab-test.c:786:test_public_state_machine_null_arguments_are_safe:PASS
+tests/lab-test.c:787:test_virtual_clock_boundaries_do_not_wrap:PASS
+tests/lab-test.c:788:test_in_memory_channel_clean_empty_and_exact_multiple_files:PASS
+tests/lab-test.c:789:test_in_memory_channel_fixed_seed_bidirectional_damage:PASS
+
+-----------------------
+22 Tests 0 Failures 0 Ignored 
+OK
+ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 ./build/debug-adapter-tests/myapp_adapter_td
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+poll: Input/output error
+UDP socket failed (poll events 8).
+Cannot resolve relay 'localhost': Name or service not known
+connect relay: Too many open files
+connect relay: No route to host
+send: Input/output error
+UDP send returned a partial datagram.
+Internal packet encoding error.
+recv: Input/output error
+Relay refused registration: no receiver
+No relay reply (attempt 1/5).
+No relay reply (attempt 2/5).
+No relay reply (attempt 3/5).
+No relay reply (attempt 4/5).
+No relay reply (attempt 5/5).
+Relay registration timed out after five attempts.
+relay reply: Input/output error
+send: Input/output error
+clock_gettime: Input/output error
+poll: Input/output error
+Relay registration exceeds the 2048-byte limit.
+Relay registration exceeds the 2048-byte limit.
+input: Input/output error
+seek input: Input/output error
+input size: Input/output error
+rewind input: Input/output error
+allocate input: Input/output error
+Could not read the complete input file.
+Could not read the complete input file.
+Input file changed while being read.
+Input file changed while being read.
+close input: Input/output error
+Input file exceeds the 16 MiB limit.
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+send: Input/output error
+send: Input/output error
+poll: Input/output error
+recv: Input/output error
+Transfer gave up after 10 consecutive timeouts without progress.
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+clock_gettime: Input/output error
+poll: Input/output error
+recv: Input/output error
+write output: Input/output error
+close output: Input/output error
+send: Input/output error
+Receiver timed out or exceeded the 16 MiB file limit.
+Receiver timed out or exceeded the 16 MiB file limit.
+Usage: myapp send -s <session> [-w window] [-T timeout-ms] [-l loss]
+                  [-c corrupt] [-d dup] [-p port] <relay> <file>
+       myapp recv -s <session> [-p port] <relay> <file>
+Defaults: window=8, timeout-ms=250, loss=corrupt=dup=0, port=4250
+Session: 1-32 lowercase letters, digits, or hyphens. Window: 1-64.
+Probabilities: decimal 0 through 0.5 (no exponents). File size: at most 16 MiB.
+file: No such file or directory
+Cannot resolve relay 'localhost': Name or service not known
+Relay refused registration: refused
+file: Permission denied
+poll: Input/output error
+poll: Input/output error
+close output: Input/output error
+tests/adapter-test.c:578:test_decimal_and_integer_validation:PASS
+tests/adapter-test.c:579:test_cli_modes_and_options:PASS
+tests/adapter-test.c:580:test_clock_and_poll_outcomes:PASS
+tests/adapter-test.c:581:test_resolution_and_socket_fallback:PASS
+tests/adapter-test.c:582:test_datagram_send_and_receive_failures:PASS
+tests/adapter-test.c:583:test_registration_replies_and_retries:PASS
+tests/adapter-test.c:584:test_input_success_and_file_failures:PASS
+Sent 3 bytes successfully.
+tests/adapter-test.c:585:test_sender_loop_success_and_bad_acks:PASS
+Sent 3 bytes successfully.
+tests/adapter-test.c:586:test_sender_loop_errors_and_timeout_cleanup:PASS
+Received 3 bytes successfully.
+tests/adapter-test.c:587:test_receiver_loop_delivery_and_errors:PASS
+tests/adapter-test.c:588:test_receiver_rejects_data_above_file_limit:PASS
+Usage: myapp send -s <session> [-w window] [-T timeout-ms] [-l loss]
+                  [-c corrupt] [-d dup] [-p port] <relay> <file>
+       myapp recv -s <session> [-p port] <relay> <file>
+Defaults: window=8, timeout-ms=250, loss=corrupt=dup=0, port=4250
+Session: 1-32 lowercase letters, digits, or hyphens. Window: 1-64.
+Probabilities: decimal 0 through 0.5 (no exponents). File size: at most 16 MiB.
+Sent 3 bytes successfully.
+Received 3 bytes successfully.
+tests/adapter-test.c:589:test_application_exit_codes_and_resource_cleanup:PASS
+
+-----------------------
+12 Tests 0 Failures 0 Ignored 
+OK

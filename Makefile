@@ -1,187 +1,136 @@
 SHELL := /bin/bash
+.DEFAULT_GOAL := release
+
 APP_NAME ?= myapp
-# Default build type (debug, release, test)
-BUILD ?= test
-
-# Set the directories for build and source files
-TEST_DIR ?= tests
-SRC_DIR ?= src
+BUILD ?= release
 BUILD_BASE_DIR ?= build
+CC ?= cc
+PYTHON ?= python3
+GCOVR ?= gcovr
+CPPFLAGS += -D_POSIX_C_SOURCE=200809L -Isrc
+CFLAGS ?= -std=c11 -Wall -Wextra -Wpedantic -Wconversion -Wshadow
+LDFLAGS ?=
+LDLIBS ?=
 
-# Flags for hardening and security
-# https://best.openssf.org/Compiler-Hardening-Guides/Compiler-Options-Hardening-Guide-for-C-and-C++.html
-CFLAGS ?= -Wall -Wextra -O2 -fPIE -MMD -MP
-CFLAGS += -Wformat -Wformat=2 -Wconversion -Wsign-conversion -Wimplicit-fallthrough
-CFLAGS += -fstack-protector-strong
-CFLAGS += -Werror=format-security -Werror=implicit -Werror=incompatible-pointer-types -Werror=int-conversion
+APP_SRCS := $(sort $(shell find src -name '*.c'))
+CORE_SRCS := $(filter-out src/main.c,$(APP_SRCS))
+TEST_SRCS := $(filter-out tests/adapter-test.c,$(sort $(shell find tests -name '*.c')))
+ADAPTER_TEST_SRCS := $(CORE_SRCS) tests/adapter-test.c tests/harness/unity.c
 
-# For threading uncomment the next line
-#LDFLAGS ?= -pthread
-
-# Build configurations
 ifeq ($(BUILD),release)
   BUILD_DIR := $(BUILD_BASE_DIR)/release
-  TARGET ?= $(BUILD_DIR)/$(APP_NAME)
+  MODE_FLAGS := -O2 -DNDEBUG -fstack-protector-strong
+  TARGET := $(BUILD_DIR)/$(APP_NAME)
+  SRCS := $(APP_SRCS)
 else ifeq ($(BUILD),debug)
-  CFLAGS := -g -O0 -DDEBUG -fno-omit-frame-pointer -fsanitize=address
-  LDFLAGS += -fsanitize=address
   BUILD_DIR := $(BUILD_BASE_DIR)/debug
-  TARGET ?= $(BUILD_DIR)/$(APP_NAME)_d
+  MODE_FLAGS := -g3 -O0 -fno-omit-frame-pointer -fsanitize=address,undefined -fno-pie
+  MODE_LDFLAGS := -fsanitize=address,undefined -no-pie
+  TARGET := $(BUILD_DIR)/$(APP_NAME)_d
+  SRCS := $(APP_SRCS)
 else ifeq ($(BUILD),test)
-  CFLAGS := -g -O0 -DTEST -fprofile-arcs -ftest-coverage
-  LDFLAGS += -fprofile-arcs -ftest-coverage
   BUILD_DIR := $(BUILD_BASE_DIR)/tests
-  TEST_TARGET ?= $(BUILD_DIR)/$(APP_NAME)_t
+  MODE_FLAGS := -g -O0 --coverage
+  MODE_LDFLAGS := --coverage
+  TARGET := $(BUILD_DIR)/$(APP_NAME)_t
+  SRCS := $(CORE_SRCS) $(TEST_SRCS)
+else ifeq ($(BUILD),coverage)
+  BUILD_DIR := $(BUILD_BASE_DIR)/coverage
+  MODE_FLAGS := -g -O0 --coverage
+  MODE_LDFLAGS := --coverage
+  TARGET := $(BUILD_DIR)/$(APP_NAME)_coverage
+  SRCS := $(APP_SRCS)
+else ifeq ($(BUILD),adapter-test)
+  BUILD_DIR := $(BUILD_BASE_DIR)/adapter-tests
+  MODE_FLAGS := -g -O0 --coverage
+  MODE_LDFLAGS := --coverage
+  TARGET := $(BUILD_DIR)/$(APP_NAME)_adapter_t
+  SRCS := $(ADAPTER_TEST_SRCS)
+else ifeq ($(BUILD),debug-adapter-test)
+  BUILD_DIR := $(BUILD_BASE_DIR)/debug-adapter-tests
+  MODE_FLAGS := -g3 -O0 -fno-omit-frame-pointer -fsanitize=address,undefined -fno-pie
+  MODE_LDFLAGS := -fsanitize=address,undefined -no-pie
+  TARGET := $(BUILD_DIR)/$(APP_NAME)_adapter_td
+  SRCS := $(ADAPTER_TEST_SRCS)
 else ifeq ($(BUILD),debug-test)
-  CFLAGS := -g -O0 -DDEBUG -DTEST -fno-omit-frame-pointer -fsanitize=address
-  LDFLAGS += -fsanitize=address
   BUILD_DIR := $(BUILD_BASE_DIR)/debug-test
-  TEST_TARGET ?= $(BUILD_DIR)/$(APP_NAME)_td
+  MODE_FLAGS := -g3 -O0 -fno-omit-frame-pointer -fsanitize=address,undefined -fno-pie
+  MODE_LDFLAGS := -fsanitize=address,undefined -no-pie
+  TARGET := $(BUILD_DIR)/$(APP_NAME)_td
+  SRCS := $(CORE_SRCS) $(TEST_SRCS)
 else
-  $(error Invalid build type: $(BUILD))
+  $(error Invalid BUILD=$(BUILD); choose release, debug, test, debug-test, coverage, adapter-test, or debug-adapter-test)
 endif
 
-# Collect all source files and their object files
-SRCS := $(shell find $(SRC_DIR) -name *.c)
-OBJS := $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.c.o,$(SRCS))
+OBJS := $(addprefix $(BUILD_DIR)/,$(SRCS:.c=.o))
 DEPS := $(OBJS:.o=.d)
-# Collect all the test source files and their object files
-TEST_SRCS := $(shell find $(TEST_DIR) -name *.c)
-TEST_OBJS := $(patsubst $(TEST_DIR)/%.c,$(BUILD_DIR)/%.c.o,$(TEST_SRCS))
-TEST_DEPS := $(TEST_OBJS:.o=.d)
 
-# Link the object files to create the final executable
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LDFLAGS)
+	@mkdir -p $(dir $@)
+	$(CC) $(OBJS) $(LDFLAGS) $(MODE_LDFLAGS) $(LDLIBS) -o $@
 
-# Line the object files to create the test executable
-$(TEST_TARGET): $(OBJS) $(TEST_OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(TEST_OBJS) -o $@ $(LDFLAGS)
+$(BUILD_DIR)/%.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(MODE_FLAGS) -MMD -MP -c $< -o $@
 
-# Compile object files from source files
-$(BUILD_DIR)/%.c.o: $(SRC_DIR)/%.c
-	mkdir -p $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# Compile object files from test source files
-$(BUILD_DIR)/%.c.o: $(TEST_DIR)/%.c
-	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-
-# Targets for running tests and cleaning up
-.PHONY: release debug test debug-test all clean print check report report-txt leak leak-test
-# These targets allow you to build in different modes without changing the BUILD variable
-# You can run `make debug`, `make release`, etc.
-# Each target will set the BUILD variable and call the main Makefile target
+.PHONY: all release debug test debug-test coverage adapter-test debug-adapter-test check report report-txt leak leak-test integration benchmark clean help print _build
+_build: $(TARGET)
 release:
-	$(MAKE) BUILD=release
+	$(MAKE) BUILD=release _build
 debug:
-	$(MAKE) BUILD=debug
+	$(MAKE) BUILD=debug _build
 test:
-	$(MAKE) BUILD=test
+	$(MAKE) BUILD=test _build
 debug-test:
-	$(MAKE) BUILD=debug-test
+	$(MAKE) BUILD=debug-test _build
+coverage:
+	$(MAKE) BUILD=coverage _build
+adapter-test:
+	$(MAKE) BUILD=adapter-test _build
+debug-adapter-test:
+	$(MAKE) BUILD=debug-adapter-test _build
+all: release debug test debug-test coverage adapter-test debug-adapter-test
 
-all:
-	@if [[ -e $(SRC_DIR)/main.c ]]; then \
-		$(MAKE) BUILD=debug; \
-		$(MAKE) BUILD=release; \
-		$(MAKE) BUILD=test; \
-		$(MAKE) BUILD=debug-test; \
-		echo "Builds completed. You can run the application with: ./build/release/$(APP_NAME)"; \
-		echo "You can run the debug build with: ./build/debug/$(APP_NAME)_d"; \
-		echo "You can run the test build with: ./build/tests/$(APP_NAME)_t"; \
-		echo "You can run the debug-test build with: ./build/debug-test/$(APP_NAME)_td"; \
-	else \
-		echo "No main.c found in $(SRC_DIR). Skipping debug and release builds."; \
-		$(MAKE) BUILD=test; \
-		$(MAKE) BUILD=debug-test; \
-		echo "Test builds completed. You can run the test build with: ./build/tests/$(APP_NAME)_t"; \
-		echo "You can run the debug-test build with: ./build/debug-test/$(APP_NAME)_td"; \
-	fi
+check: test adapter-test
+	./$(BUILD_BASE_DIR)/tests/$(APP_NAME)_t
+	./$(BUILD_BASE_DIR)/adapter-tests/$(APP_NAME)_adapter_t
 
-_all-exe: debug release debug-test test
+# Measure every production C file. No source, line, or branch exclusions.
+# Explicit build directories prevent stale or alternate-compiler counters from
+# leaking into the report. Real transfers complement deterministic fault tests.
+report: test adapter-test coverage
+	find $(BUILD_BASE_DIR)/tests $(BUILD_BASE_DIR)/adapter-tests $(BUILD_BASE_DIR)/coverage -name '*.gcda' -delete
+	./$(BUILD_BASE_DIR)/tests/$(APP_NAME)_t
+	./$(BUILD_BASE_DIR)/adapter-tests/$(APP_NAME)_adapter_t
+	$(PYTHON) scripts/integration-test.py --app ./$(BUILD_BASE_DIR)/coverage/$(APP_NAME)_coverage
+	$(PYTHON) scripts/io-edge-tests.py --app ./$(BUILD_BASE_DIR)/coverage/$(APP_NAME)_coverage --slow
+	@mkdir -p $(BUILD_BASE_DIR)/report/html $(BUILD_BASE_DIR)/report/txt
+	$(GCOVR) --root . --filter 'src/.*\.c$$' --fail-under-line 100 --fail-under-branch 100 --print-summary --json $(BUILD_BASE_DIR)/report/coverage.json --txt $(BUILD_BASE_DIR)/report/txt/coverage_report.txt --html-details $(BUILD_BASE_DIR)/report/html/coverage_report.html $(BUILD_BASE_DIR)/tests $(BUILD_BASE_DIR)/adapter-tests $(BUILD_BASE_DIR)/coverage
+	@cat $(BUILD_BASE_DIR)/report/txt/coverage_report.txt
+report-txt: report
 
-_all-text: test debug-test
-
-leak:
-	@if [[ -e ./build/debug/$(APP_NAME)_d ]]; then \
-		ASAN_OPTIONS="detect_leaks=1" ./build/debug/$(APP_NAME)_d; \
-	else \
-		echo "Build the debug target first by running 'make debug'."; \
-		exit 1; \
-	fi
-
-leak-test:
-	@if [[ -e ./build/debug-test/$(APP_NAME)_td ]]; then \
-		ASAN_OPTIONS="detect_leaks=1" ./build/debug-test/$(APP_NAME)_td; \
-	else \
-		echo "Build the debug target first by running 'make debug-test'."; \
-		exit 1; \
-	fi
-
-check:
-	@if [[ -e ./build/tests/$(APP_NAME)_t ]]; then \
-		./build/tests/$(APP_NAME)_t; \
-	else \
-		echo "Build the debug target first by running 'make test'."; \
-		exit 1; \
-	fi
-
-
-report:
-	@if [[ -e ./build/tests/$(APP_NAME)_t ]]; then \
-		./build/tests/$(APP_NAME)_t; \
-	else \
-		echo "Build the debug target first by running 'make test'."; \
-		exit 1; \
-	fi
-	./build/tests/$(APP_NAME)_t
-	mkdir -p ./build/report/html
-	mkdir -p ./build/report/txt
-	gcovr -r . --html --html-details --exclude-directories build/tests/harness --exclude '.*main\.c$$' --exclude '.*test\.c$$' -o ./build/report/html/coverage_report.html
-	gcovr -r . --txt                 --exclude-directories build/tests/harness --exclude '.*main\.c$$' --exclude '.*test\.c$$'
-
-
-help:
-	@echo "Usage: make [target]"
-	@echo "Available targets:"
-	@echo "  all         - Builds debug, release, and test targets"
-	@echo "  release     - Build the application in release mode (default)"
-	@echo "  debug       - Build the application in debug mode"
-	@echo "  test        - Build the unit tests"
-	@echo "  check       - Run tests and check results"
-	@echo "  report      - Generate HTML and TXT coverage report after running tests"
-	@echo "  leak        - Check for memory leaks in executable debug mode"
-	@echo "  leak-test   - Check for memory leaks in unit tests debug mode"
-	@echo "  clean       - Remove build artifacts"
-	@echo "  print       - Print build variables for MakeFile debugging"
-	@echo "  help        - Show this help message"
-
+leak-test: debug-test debug-adapter-test
+	ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 ./$(BUILD_BASE_DIR)/debug-test/$(APP_NAME)_td
+	ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 ./$(BUILD_BASE_DIR)/debug-adapter-tests/$(APP_NAME)_adapter_td
+leak: debug
+	ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 ./$(BUILD_BASE_DIR)/debug/$(APP_NAME)_d
+integration: release
+	$(PYTHON) scripts/integration-test.py --app ./$(BUILD_BASE_DIR)/release/$(APP_NAME)
+	$(PYTHON) scripts/io-edge-tests.py --app ./$(BUILD_BASE_DIR)/release/$(APP_NAME)
+benchmark: release
+	$(PYTHON) scripts/benchmark.py --app ./$(BUILD_BASE_DIR)/release/$(APP_NAME)
 
 clean:
-	$(RM) -rf $(BUILD_BASE_DIR) submission-report.md
+	rm -rf -- $(BUILD_BASE_DIR)
 
-# Print the build configuration and variables for debugging build issues
+help:
+	@echo 'make [all|release|debug|test|debug-test|coverage|adapter-test|debug-adapter-test|check|report|leak|leak-test|integration|benchmark|clean]'
+	@echo 'Default: release. Release executable: build/release/myapp'
+	@echo 'report requires gcovr and enforces 100% line and branch coverage for every src/*.c file.'
+	@echo 'benchmark runs the required 1 MiB file experiment (12 transfers).'
 print:
-	@echo "---- Build Configuration ----"
-	@echo "Building in $(BUILD) mode"
-	@echo "Build directory: $(BUILD_DIR)"
-	@echo "CFLAGS: $(CFLAGS)"
-	@echo "LDFLAGS: $(LDFLAGS)"
-	@echo "---- Source Information ----"
-	@echo "App Target: $(TARGET)"
-	@echo "App source files: $(SRCS)"
-	@echo "App object files: $(OBJS)"
-	@echo "App dependencies: $(DEPS)"
-	@echo "---- Test Information ----"
-	@echo "Test target: $(TEST_TARGET)"
-	@echo "Test source files: $(TEST_SRCS)"
-	@echo "Test object files: $(TEST_OBJS)"
-	@echo "Test Dependencies: $(TEST_DEPS)"
+	@echo 'BUILD=$(BUILD) CC=$(CC) TARGET=$(TARGET)'
+	@echo 'CPPFLAGS=$(CPPFLAGS) CFLAGS=$(CFLAGS) MODE_FLAGS=$(MODE_FLAGS)'
+	@echo 'SRCS=$(SRCS)'
 
-
-# Include the dependency files if they exist
-# This allows for automatic dependency tracking
--include $(DEPS) $(TEST_DEPS)
+-include $(DEPS)
